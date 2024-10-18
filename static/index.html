@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Putting District Temperature Data</h1>
+    <h7>Script runs every 5 minutes</h7>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Host Name</th>
+                <th>IP Address</th>
+                <th>Temperature (F)</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be inserted here -->
+        </tbody>
+    </table>
+
+<script>
+        function fetchData() {
+            fetch('/data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const tbody = document.querySelector('#data-table tbody');
+                    tbody.innerHTML = ''; // Clear existing rows
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        const temperature = row.temperature_f;
+                        tr.innerHTML = `
+                            <td>${row.host_name}</td>
+                            <td>${row.ip_address}</td>
+                            <td class="${temperature > 70 ? 'highlight' : ''}">${temperature}</td>
+                            <td>${formatTimestamp(row.timestamp)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    // Optionally, display a message in the UI
+                    const tbody = document.querySelector('#data-table tbody');
+                    tbody.innerHTML = '<tr><td colspan="4">Error fetching data. Please try again later.</td></tr>';
+                });
+        }
+
+        function formatTimestamp(timestamp) {
+            // Convert ISO string to a more readable format
+            const date = new Date(timestamp);
+            return date.toLocaleString(); // Localized format
+        }
+
+        // Fetch data every 30 seconds
+        setInterval(fetchData, 30000);
+
+        // Initial fetch
+        fetchData();
+    </script>
+</body>
+</html>

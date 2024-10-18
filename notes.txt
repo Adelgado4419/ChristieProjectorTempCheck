@@ -1,0 +1,28 @@
+Location of code: python
+
+simply@simply-NUC10i5FNK:~/Documents/projectorPython
+
+
+Running the web server that queries the temp data from projectors
+while in dir, 
+python3 proj8_5.py
+
+
+Running the App app.py that serves the frontend and queries the sqlite database
+while in dir 
+
+python3 app.py
+
+
+#########
+Testing the sqlite3 db
+in a terminal, run
+
+sqlite3 received_data.db
+
+
+then 
+
+SELECT * FROM temperature_data ORDER BY id DESC LIMIT 32;
+
+
